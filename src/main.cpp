@@ -1,7 +1,6 @@
 #include <computor.hpp>
 #include <regex>
 
-
 bool is_valid_polynomial_input(const std::string& input_string) {
     size_t equals_pos = input_string.find('=');
     if (equals_pos == std::string::npos || equals_pos == input_string.length() - 1) {
@@ -68,9 +67,6 @@ int main(int argc, char **argv)
     }
 
     Polynomial polynomial(argv[1]);
-    polynomial.parsePolynomial();
-    polynomial.printPolynomialReduced();
-    polynomial.printPolynomialDegree();
     polynomial.solvePolynomial();
 
     return 0;

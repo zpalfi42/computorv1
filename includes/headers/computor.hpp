@@ -9,8 +9,8 @@
 
 class Polynomial {
 public:
-    Polynomial(const std::string &rawStr): _rawStr(rawStr), _degree(0){};
-    ~Polynomial(void){};
+    Polynomial(const std::string &rawStr);
+    ~Polynomial(void);
 
     void parsePolynomial(void);
     void solvePolynomial(void);

@@ -1,5 +1,5 @@
 #ifndef COMPUTOR_IPP
-# define    COMPUTOR_IPP
+# define COMPUTOR_IPP
 
 # include "computor.hpp"
 
@@ -8,17 +8,16 @@ double absoluteDifference(double a, double b) {
 }
 
 double squareRoot(double x, double precision = 0.00001) {
-    if (x < 0) {
+    if (x < 0)
         return -1;
-    }
-    if (x == 0) {
+    if (x == 0)
         return 0;
-    }
 
     double guess = x / 2.0;
     double previousGuess;
 
-    do {
+    do 
+    {
         previousGuess = guess;
         guess = (guess + x / guess) / 2.0;
     } while (absoluteDifference(guess, previousGuess) > precision);
@@ -26,19 +25,34 @@ double squareRoot(double x, double precision = 0.00001) {
     return guess;
 }
 
+Polynomial::Polynomial(const std::string &rawStr) : _rawStr(rawStr), _degree(0) {
+    parsePolynomial();
+    printPolynomialReduced();
+    printPolynomialDegree();
+}
+
+Polynomial::~Polynomial(void) {
+    _rawStr.clear();
+    _polynomial.clear();
+    _degree = 0;
+}
+
 void Polynomial::parsePolynomial(void) {
     bool rhs = false;
     std::string tempGroup;
 
-    for (size_t i = 0; i < _rawStr.length(); ++i) {
+    for (size_t i = 0; i < _rawStr.length(); ++i)
+    {
         std::string temp = _rawStr.substr(i, 3);
         tempGroup += _rawStr[i];
-        if (temp == " + " || temp == " - " || temp == " = " || i == _rawStr.length() - 1) {
+        if (temp == " + " || temp == " - " || temp == " = " || i == _rawStr.length() - 1)
+        {
             int pow = 0;
             float num = 1.0;
             int sign = 1;
 
-            if (tempGroup.find('X') != std::string::npos) {
+            if (tempGroup.find('X') != std::string::npos)
+            {
                 std::string powStr;
                 if (tempGroup.find('X')+2 < tempGroup.length())
                     powStr = tempGroup.substr(tempGroup.find('X')+2, 3);
@@ -70,7 +84,8 @@ void Polynomial::parsePolynomial(void) {
         }
     }
 
-    for (const auto &pair : _polynomial) {
+    for (const auto &pair : _polynomial)
+    {
         if (pair.first > _degree && pair.second != 0)
             _degree = pair.first;
     }
@@ -82,7 +97,8 @@ void Polynomial::printPolynomialDegree(void) const {
 
 void Polynomial::printPolynomialReduced(void) const {
     std::cout << "Reduced Polynomial: ";
-    for (const auto &pair : _polynomial) {
+    for (const auto &pair : _polynomial)
+    {
         if (pair.second > 0 && pair.first != 0)
             std::cout << "+ ";
         if (pair.second > 1 || pair.second < -1)
@@ -116,15 +132,16 @@ void Polynomial::printPolynomialReduced(void) const {
 }
 
 void Polynomial::solvePolynomial(void) {
-    if (_degree == 0) {
-        if (_polynomial[0] == 0) {
+    if (_degree == 0)
+    {
+        if (_polynomial[0] == 0)
             std::cout << "All real numbers are solutions" << std::endl;
-        } else {
+        else
             std::cout << "No solution" << std::endl;
-        }
         return;
     }
-    else if (_degree == 1) {
+    else if (_degree == 1)
+    {
         auto it = _polynomial.begin();
         float a = it->second;
         ++it;
@@ -132,20 +149,26 @@ void Polynomial::solvePolynomial(void) {
         std::cout << "The solution is: " << -a / b << std::endl;
         return;
     }
-    else if (_degree == 2) {
+    else if (_degree == 2)
+    {
         float a = _polynomial[2];
         float b = _polynomial[1];
         float c = _polynomial[0];
         float discriminant = b * b - 4 * a * c;
-        if (discriminant > 0) {
+        if (discriminant > 0)
+        {
             std::cout << "Discriminant is strictly positive, the two solutions are: " << std::endl;
             float x1 = (-b - squareRoot(discriminant)) / (2 * a);
             float x2 = (-b + squareRoot(discriminant)) / (2 * a);
             std::cout << x1 << std::endl << x2 << std::endl;
-        } else if (discriminant == 0) {
+        }
+        else if (discriminant == 0)
+        {
             float x = -b / (2 * a);
             std::cout << "Discriminant is equal to 0, the solution is: " << x << std::endl;
-        } else {
+        }
+        else
+        {
             std::cout << "Discriminant is strictly negative, the two complex solutions are: " << std::endl;
             float realPart = -b / (2 * a);
             float imaginaryPart = squareRoot(-discriminant) / (2 * a);
@@ -161,9 +184,8 @@ void Polynomial::solvePolynomial(void) {
             }
         }
     }
-    else {
+    else
         std::cout << "Polynomial degree is strictly greater than 2, I can't solve." << std::endl;
-    }
 }
 
 std::string Polynomial::getRawStr(void) const {
