@@ -26,7 +26,6 @@ double squareRoot(double x, double precision = 0.00001) {
 }
 
 Polynomial::Polynomial(const std::string &rawStr) : _rawStr(rawStr), _degree(0) {
-    std::cout << "BONUUUUSS" << std::endl;
     parsePolynomial();
     printPolynomialReduced();
     printPolynomialDegree();
@@ -45,13 +44,13 @@ void Polynomial::parsePolynomial(void) {
     for (size_t i = 0; i < _rawStr.length(); ++i)
     {
         std::string temp = _rawStr.substr(i, 3);
-        tempGroup += _rawStr[i];
+        if (_rawStr[i] != ' ')
+            tempGroup += _rawStr[i];
         if (temp == " + " || temp == " - " || temp == " = " || i == _rawStr.length() - 1)
         {
             int pow = 0;
             float num = 1.0;
             int sign = 1;
-
             if (tempGroup.find('X') != std::string::npos)
             {
                 std::string powStr;

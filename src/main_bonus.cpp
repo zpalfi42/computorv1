@@ -1,54 +1,76 @@
 #include <computor_bonus.hpp>
-#include <regex>
 
-bool is_valid_polynomial_input(const std::string& input_string) {
-    size_t equals_pos = input_string.find('=');
-    if (equals_pos == std::string::npos || equals_pos == input_string.length() - 1) {
+bool is_valid_polynomial_input(const std::string &input) {
+    if (input.empty())
         return false;
+    int count = 0;
+    for (char c : input)
+    {
+        if (c == '=')
+            count++;
+        else if (!isdigit(c) && c!=' ' && c!='X' && c!='^' && c!='*' && c!='-' && c!='+')
+            return false;
     }
-    std::string after_equals = input_string.substr(equals_pos + 1);
-    after_equals.erase(0, after_equals.find_first_not_of(" "));
-    after_equals.erase(after_equals.find_last_not_of(" ") + 1);
-    if (after_equals.empty()) {
+    if (count != 1)
         return false;
-    }
+    
+    if (input.size() < 5)
+        return false;
 
-    std::regex allowed_chars_regex("^[0-9+\\-*^=X\\s]+$");
-    if (!std::regex_match(input_string, allowed_chars_regex)) {
-        return false;
-    }
-
-    std::regex power_term_regex("X\\^(\\S+)");
-    std::smatch match;
-    std::string::const_iterator search_start(input_string.cbegin());
-    while (std::regex_search(search_start, input_string.cend(), match, power_term_regex)) {
-        if (match.size() > 1) {
-            std::regex digit_regex("^[0-9]+$");
-            if (!std::regex_match(match[1].str(), digit_regex)) {
+    std::string tempGroup;
+    for (size_t i = 0; i < input.length(); ++i)
+    {
+        // std::cout << i << std::endl;
+        if (input[i] == '=')
+        {
+            if (i == 0 || i == input.length()-1)
                 return false;
-            }
+            if (input[i-1] != ' ' && input[i+1] != ' ')
+                return false;
         }
-        search_start = match.suffix().first;
-    }
-
-    std::regex no_space_before_x("([+\\-*=])X");
-    if (std::regex_search(input_string, no_space_before_x)) {
-        return false;
-    }
-
-    std::regex consecutive_operators_regex("([+\\-*^])\\1+");
-    if (std::regex_search(input_string, consecutive_operators_regex)) {
-        return false;
-    }
-
-    std::regex spaced_operators_regex("[+\\-*^]\\s*[+\\-*^]");
-    if (std::regex_search(input_string, spaced_operators_regex)) {
-        return false;
-    }
-
-    std::regex trailing_operators_regex("([+\\-*])\\s*$");
-    if (std::regex_search(input_string, trailing_operators_regex)) {
-        return false;
+        if (input[i] == '+' || input[i] == '-' || input[i] == '=' || i == input.length() - 1)
+        {
+            // ADD LAST CHAR
+            if (i == input.length() - 1 && input[i] != ' ')
+            {
+                if (input[i] == '-' || input[i] == '+')
+                    return false;
+                tempGroup += input[i];
+            }
+            
+            // CHECK ONLY OPERATOR ERROR
+            if ((tempGroup.find('-') != std::string::npos || tempGroup.find('+') != std::string::npos) && tempGroup.length() == 1)
+                return false;
+            // CHECK X ERRORS
+            if (tempGroup.find('X') != std::string::npos)
+            {
+                if (tempGroup.find('X') + 1 != tempGroup.size())
+                {
+                    if (tempGroup.size() < 3)
+                        return false;
+                    else if (tempGroup[tempGroup.find('X')+1] != '^' || !isdigit(tempGroup[tempGroup.find('X')+2]))
+                        return false;
+                }
+                if (tempGroup.find('X') != 0)
+                {
+                    if (tempGroup[tempGroup.find('X')-1] != '-' && tempGroup[tempGroup.find('X')-1] != '+' && tempGroup[tempGroup.find('X')-1] != '*')
+                        return false;
+                }
+            }
+            // CHECK * ERRORS
+            if (tempGroup.find('*') != std::string::npos)
+            {
+                if (tempGroup[0] == '*' || tempGroup[tempGroup.size()-1] == '*')
+                    return false;
+                else if (!isdigit(tempGroup[0]) && !isdigit(tempGroup[1]))
+                    return false;
+                else if (tempGroup[tempGroup.find('*')+1] != 'X')
+                    return false;
+            }
+            tempGroup.clear();
+        }
+        if (input[i] != ' ' && input[i] != '=')
+            tempGroup += input[i];
     }
 
     return true;
