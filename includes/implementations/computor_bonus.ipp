@@ -1,7 +1,7 @@
-#ifndef COMPUTOR_IPP
-# define COMPUTOR_IPP
+#ifndef COMPUTOR_BONUS_IPP
+# define COMPUTOR_BONUS_IPP
 
-# include "computor.hpp"
+# include "computor_bonus.hpp"
 
 double absoluteDifference(double a, double b) {
     return (a > b) ? (a - b) : (b - a);
@@ -26,6 +26,7 @@ double squareRoot(double x, double precision = 0.00001) {
 }
 
 Polynomial::Polynomial(const std::string &rawStr) : _rawStr(rawStr), _degree(0) {
+    std::cout << "BONUUUUSS" << std::endl;
     parsePolynomial();
     printPolynomialReduced();
     printPolynomialDegree();
@@ -99,12 +100,34 @@ void Polynomial::printPolynomialReduced(void) const {
     std::cout << "Reduced Polynomial: ";
     for (const auto &pair : _polynomial)
     {
-        if (pair.second == 0)
-            continue;
-        else if (pair.second > 0)
-            std::cout << "+ " << pair.second << " * X^" << pair.first << " ";
-        else if (pair.second < 0)
-            std::cout << "- " << -pair.second << " * X^" << pair.first << " ";
+        if (pair.second > 0 && pair.first != 0)
+            std::cout << "+ ";
+        if (pair.second > 1 || pair.second < -1)
+        {
+            if (pair.first == 0)
+                std::cout << pair.second << " ";
+            else if (pair.first == 1)
+                std::cout << pair.second << " * X ";
+            else if (pair.first > 1)
+                std::cout << pair.second << " * X^" << pair.first << " ";
+        }
+        else if (pair.second == 1 || pair.second == -1)
+        {
+            if (pair.first == 0)
+                std::cout << pair.second << " ";
+            else if (pair.first == 1)
+                if (pair.second == 1)
+                    std::cout << "X ";
+                else
+                    std::cout << "- X ";
+            else
+                if (pair.second == 1)
+                    std::cout << "X^" << pair.first << " ";
+                else
+                    std::cout << "- X^" << pair.first << " ";
+        }
+        else if (_polynomial.size() == 1)
+            std::cout << "0 ";
     }
     std::cout << "= 0" << std::endl;
 }
@@ -124,8 +147,13 @@ void Polynomial::solvePolynomial(void) {
         int a = it->second;
         ++it;
         int b = it->second;
+        std::cout << "a = " << a << ", b = " << b << std::endl;
         float x = -(float)a / (float)b;
-        std::cout << "The solution is: " << x << std::endl;
+        std::cout << "The solution is: " << x ;
+        if (a % b != 0)
+            std::cout << " (or "  << -a << "/" << b << ")" << std::endl;
+        else
+            std::cout << std::endl;
         return;
     }
     else if (_degree == 2)
@@ -134,13 +162,17 @@ void Polynomial::solvePolynomial(void) {
         float b = _polynomial[1];
         float c = _polynomial[0];
         float discriminant = b * b - 4 * a * c;
+        std::cout << "Applying the formula: (-b +- sqrt(b^2 -4*a*c))/2a" << std::endl;
+        std::cout << "Calculating the discriminant (b^2 - 4*a*c), where a = " << a << ", b = " << b << ", adn c = " << c << std::endl;
         if (discriminant > 0)
         {
             std::cout << "Discriminant is strictly positive, the two solutions are: " << std::endl;
             float x1 = (-b - squareRoot(discriminant)) / (2 * a);
             float x2 = (-b + squareRoot(discriminant)) / (2 * a);
-            std::cout << x1 << std::endl;
-            std::cout << x2 << std::endl;
+            std::cout << "(" << -b << " +- sqrt(" << discriminant << ")) / (2 * " << a << ") <=>" << std::endl;
+            std::cout << "(" << -b << " +- " << squareRoot(discriminant) << ") / " << 2*a << " <=>" << std::endl;
+            std::cout << (-b - squareRoot(discriminant)) << " / " << 2*a << " = " << x1 << std::endl;
+            std::cout << (-b + squareRoot(discriminant)) << " / " << 2*a << " = " << x2 << std::endl;
         }
         else if (discriminant == 0)
         {
@@ -149,9 +181,11 @@ void Polynomial::solvePolynomial(void) {
         }
         else
         {
-            std::cout << "Discriminant is strictly negative, the two complex solutions are: " << std::endl;
+            std::cout << "Discriminant is strictly negative, the two complex solutions (in a + b*i from, where a is the real part and b is the imaginary part) are: " << std::endl;
             float realPart = -b / (2 * a);
             float imaginaryPart = squareRoot(-discriminant) / (2 * a);
+            std::cout << "(" << -b << " +- sqrt(" << discriminant << ")) / (2 * " << a << ") <=>" << std::endl;
+            std::cout << "(" << -b << " +- " << squareRoot(-discriminant) << ") / " << 2*a << " <=>" << std::endl;
             if (imaginaryPart > 0)
             {
                 std::cout << realPart << " + " << imaginaryPart << "i" << std::endl;
