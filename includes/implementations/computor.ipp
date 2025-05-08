@@ -44,13 +44,16 @@ void Polynomial::parsePolynomial(void) {
     for (size_t i = 0; i < _rawStr.length(); ++i)
     {
         std::string temp = _rawStr.substr(i, 3);
-        tempGroup += _rawStr[i];
+        if (_rawStr[i] != ' ')
+            tempGroup += _rawStr[i];
         if (temp == " + " || temp == " - " || temp == " = " || i == _rawStr.length() - 1)
         {
             int pow = 0;
             float num = 1.0;
             int sign = 1;
 
+            if (tempGroup.empty())
+                continue;
             if (tempGroup.find('X') != std::string::npos)
             {
                 std::string powStr;
@@ -97,14 +100,26 @@ void Polynomial::printPolynomialDegree(void) const {
 
 void Polynomial::printPolynomialReduced(void) const {
     std::cout << "Reduced Polynomial: ";
+    size_t count = 0;
+    bool    printed = false;
     for (const auto &pair : _polynomial)
     {
+        count++;
         if (pair.second == 0)
-            continue;
+            if (count == _polynomial.size() && !printed)
+                std::cout << "0 ";
+            else
+                continue;
         else if (pair.second > 0)
+        {
             std::cout << "+ " << pair.second << " * X^" << pair.first << " ";
+            printed = true;
+        }
         else if (pair.second < 0)
+        {
             std::cout << "- " << -pair.second << " * X^" << pair.first << " ";
+            printed = true;
+        }
     }
     std::cout << "= 0" << std::endl;
 }

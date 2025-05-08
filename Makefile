@@ -45,7 +45,7 @@ all			:	$(NAME)
 bonus		:	$(NAME_BONUS)
 
 clean		:
-		@rm -rf $(OBJ_DIR)
+		@rm -rf $(OBJ_DIR) $(OBJ_BONUS_DIR)
 
 fclean		:	clean
 		@rm -rf $(NAME) $(NAME_BONUS)

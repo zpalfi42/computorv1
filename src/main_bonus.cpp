@@ -18,18 +18,26 @@ bool is_valid_polynomial_input(const std::string &input) {
         return false;
 
     std::string tempGroup;
+    size_t  groupCount = 0;
+
     for (size_t i = 0; i < input.length(); ++i)
     {
-        // std::cout << i << std::endl;
         if (input[i] == '=')
         {
             if (i == 0 || i == input.length()-1)
                 return false;
             if (input[i-1] != ' ' && input[i+1] != ' ')
                 return false;
+            if (groupCount == 0)
+                return false;
         }
         if (input[i] == '+' || input[i] == '-' || input[i] == '=' || i == input.length() - 1)
         {
+            // CHECK EMPTPY GROUP (MEANS DOUBLE SIGN OR SIGN FOLLOWED BY NOTHING)
+            if (tempGroup.size() < 1 && groupCount != 0)
+                return false;
+            if (tempGroup == "=" && i == input.length() - 1)
+                return false;
             // ADD LAST CHAR
             if (i == input.length() - 1 && input[i] != ' ')
             {
@@ -37,7 +45,7 @@ bool is_valid_polynomial_input(const std::string &input) {
                     return false;
                 tempGroup += input[i];
             }
-            
+
             // CHECK ONLY OPERATOR ERROR
             if ((tempGroup.find('-') != std::string::npos || tempGroup.find('+') != std::string::npos) && tempGroup.length() == 1)
                 return false;
@@ -52,11 +60,10 @@ bool is_valid_polynomial_input(const std::string &input) {
                         return false;
                 }
                 if (tempGroup.find('X') != 0)
-                {
                     if (tempGroup[tempGroup.find('X')-1] != '-' && tempGroup[tempGroup.find('X')-1] != '+' && tempGroup[tempGroup.find('X')-1] != '*')
                         return false;
-                }
             }
+
             // CHECK * ERRORS
             if (tempGroup.find('*') != std::string::npos)
             {
@@ -68,11 +75,11 @@ bool is_valid_polynomial_input(const std::string &input) {
                     return false;
             }
             tempGroup.clear();
+            groupCount++;
         }
-        if (input[i] != ' ' && input[i] != '=')
+        if (input[i] != ' ')
             tempGroup += input[i];
     }
-
     return true;
 }
 

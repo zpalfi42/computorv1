@@ -51,6 +51,9 @@ void Polynomial::parsePolynomial(void) {
             int pow = 0;
             float num = 1.0;
             int sign = 1;
+
+            if (tempGroup.empty())
+                continue;
             if (tempGroup.find('X') != std::string::npos)
             {
                 std::string powStr;
